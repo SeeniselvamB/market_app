@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useApp } from '../storage/AppContext';
+import { useLang } from '../storage/LanguageContext';
 import { COLORS, TNR, TNR_BOLD } from '../utils/theme';
 
 import SetupScreen       from '../screens/SetupScreen';
@@ -35,6 +36,7 @@ function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
 }
 
 function MainTabs() {
+  const { t } = useLang();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -45,25 +47,26 @@ function MainTabs() {
         tabBarLabelStyle: styles.tabLabel,
       }}>
       <Tab.Screen name="Dashboard" component={DashboardScreen}
-        options={{ tabBarLabel: 'Dashboard', tabBarIcon: ({ focused }) => <TabIcon emoji="📊" focused={focused} /> }} />
+        options={{ tabBarLabel: t.dashboard, tabBarIcon: ({ focused }) => <TabIcon emoji="📊" focused={focused} /> }} />
       <Tab.Screen name="Orders" component={OrdersScreen}
-        options={{ tabBarLabel: 'Orders', tabBarIcon: ({ focused }) => <TabIcon emoji="🛍️" focused={focused} /> }} />
+        options={{ tabBarLabel: t.orders, tabBarIcon: ({ focused }) => <TabIcon emoji="🛍️" focused={focused} /> }} />
       <Tab.Screen name="Billing" component={BillingScreen}
-        options={{ tabBarLabel: 'Billing', tabBarIcon: ({ focused }) => <TabIcon emoji="💰" focused={focused} /> }} />
+        options={{ tabBarLabel: t.billing, tabBarIcon: ({ focused }) => <TabIcon emoji="💰" focused={focused} /> }} />
       <Tab.Screen name="Settings" component={SettingsScreen}
-        options={{ tabBarLabel: 'Settings', tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" focused={focused} /> }} />
+        options={{ tabBarLabel: t.settings.replace('⚙️ ', ''), tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" focused={focused} /> }} />
     </Tab.Navigator>
   );
 }
 
 export default function AppNavigator() {
   const { state, isLoading } = useApp();
+  const { t } = useLang();
 
   if (isLoading) {
     return (
       <View style={styles.loading}>
         <Text style={styles.loadingEmoji}>🧺</Text>
-        <Text style={styles.loadingText}>Loading...</Text>
+        <Text style={styles.loadingText}>{t.loading}</Text>
       </View>
     );
   }

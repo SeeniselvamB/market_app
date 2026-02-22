@@ -17,12 +17,13 @@ export default function SetupScreen() {
 
   const [step, setStep] = useState(1);
 
-  // Step 1
-  const [bizName, setBizName]   = useState('');
-  const [owner,   setOwner]     = useState('');
-  const [phone,   setPhone]     = useState('');
+  // Step 1 — Business Info
+  const [bizName,         setBizName]         = useState('');
+  const [owner,           setOwner]           = useState('');
+  const [phone,           setPhone]           = useState('');
+  const [ownerIsDp,       setOwnerIsDp]       = useState(false);
 
-  // Step 2
+  // Step 2 — Market type
   const [marketType, setMarketType] = useState('');
 
   // Step 3 — add product inline form
@@ -43,7 +44,13 @@ export default function SetupScreen() {
   const goStep = async (next: number) => {
     if (next === 2) {
       if (!bizName.trim()) { Alert.alert('Required', 'Please enter your business name.'); return; }
-      await saveBusiness({ name: bizName.trim(), owner: owner.trim(), phone: phone.trim(), marketType: '' });
+      await saveBusiness({
+        name: bizName.trim(),
+        owner: owner.trim(),
+        phone: phone.trim(),
+        marketType: '',
+        ownerIsDeliveryPerson: ownerIsDp,
+      });
     }
     if (next === 3) {
       if (!marketType) { Alert.alert('Required', 'Please select a market type.'); return; }
@@ -115,6 +122,33 @@ export default function SetupScreen() {
               <Input label="Business Name *" value={bizName} onChangeText={setBizName} placeholder="e.g. Sharma Fresh Market" />
               <Input label="Owner / Contact Name" value={owner} onChangeText={setOwner} placeholder="Your name" />
               <Input label="Phone Number" value={phone} onChangeText={setPhone} placeholder="+91 98765 43210" keyboardType="phone-pad" />
+
+              {/* ── Mark Owner as Delivery Person ── */}
+              <TouchableOpacity
+                style={[styles.toggleRow, ownerIsDp && styles.toggleRowActive]}
+                onPress={() => setOwnerIsDp(prev => !prev)}
+                activeOpacity={0.8}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.toggleLabel}>🚚 Owner is Delivery Person</Text>
+                  <Text style={styles.toggleSub}>
+                    Enable if the business owner delivers stock. No invoice will be generated for the owner.
+                  </Text>
+                </View>
+                <View style={[styles.toggle, ownerIsDp && styles.toggleOn]}>
+                  <View style={[styles.toggleDot, ownerIsDp && styles.toggleDotOn]} />
+                </View>
+              </TouchableOpacity>
+
+              {ownerIsDp && (
+                <View style={styles.dpHintBox}>
+                  <Text style={styles.dpHintText}>
+                    ✅ The owner will appear as the default Delivery Person in the Orders screen for stock assignment.
+                    All customer deliveries will deduct extra stock from the owner's assigned quantities.
+                    The owner is never billed.
+                  </Text>
+                </View>
+              )}
+
               <Button label="Continue →" onPress={() => goStep(2)} full />
             </Card>
           )}
@@ -257,4 +291,19 @@ const styles = StyleSheet.create({
   marketLabelActive: { color: COLORS.green },
   inlineForm: { backgroundColor: COLORS.grayLight, borderRadius: RADIUS.sm, padding: SPACING.md, marginBottom: SPACING.md },
   btnRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
+  // Toggle styles
+  toggleRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    padding: SPACING.md, borderRadius: RADIUS.md, borderWidth: 1.5,
+    borderColor: COLORS.border, marginBottom: SPACING.sm, backgroundColor: COLORS.white,
+  },
+  toggleRowActive: { borderColor: COLORS.green, backgroundColor: COLORS.greenPale },
+  toggleLabel: { fontSize: 14, fontFamily: TNR_BOLD, fontWeight: '700', color: COLORS.dark, marginBottom: 3 },
+  toggleSub: { fontSize: 11, fontFamily: TNR, color: COLORS.gray, lineHeight: 16 },
+  toggle: { width: 44, height: 24, borderRadius: 12, backgroundColor: COLORS.border, justifyContent: 'center', padding: 2 },
+  toggleOn: { backgroundColor: COLORS.green },
+  toggleDot: { width: 20, height: 20, borderRadius: 10, backgroundColor: COLORS.white },
+  toggleDotOn: { alignSelf: 'flex-end' },
+  dpHintBox: { backgroundColor: '#E8F5E9', borderRadius: RADIUS.sm, padding: SPACING.md, marginBottom: SPACING.md, borderLeftWidth: 3, borderLeftColor: COLORS.green },
+  dpHintText: { fontSize: 12, fontFamily: TNR, color: COLORS.green, lineHeight: 18 },
 });

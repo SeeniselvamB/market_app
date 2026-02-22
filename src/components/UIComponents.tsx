@@ -111,10 +111,10 @@ export const Input = forwardRef<TextInput, InputProps>(({ label, style, inputSty
 });
 
 // ── Badge ─────────────────────────────────────────────────────
-interface BadgeProps { label: string; variant?: 'green' | 'orange' | 'red' | 'gray'; }
-export function Badge({ label, variant = 'gray' }: BadgeProps) {
+interface BadgeProps { label: string; variant?: 'green' | 'orange' | 'red' | 'gray'; style?: ViewStyle; }
+export function Badge({ label, variant = 'gray', style }: BadgeProps) {
   return (
-    <View style={[styles.badge, styles[`badge_${variant}` as keyof typeof styles] as ViewStyle]}>
+    <View style={[styles.badge, styles[`badge_${variant}` as keyof typeof styles] as ViewStyle, style]}>
       <Text style={[styles.badgeText, styles[`badgeText_${variant}` as keyof typeof styles] as TextStyle]}>
         {label}
       </Text>
@@ -152,8 +152,8 @@ interface StatCardProps { value: string; label: string; color?: string; style?: 
 export function StatCard({ value, label, color = COLORS.green, style }: StatCardProps) {
   return (
     <View style={[styles.statCard, style]}>
-      <Text style={[styles.statValue, { color }]}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={[styles.statValue, { color }]} numberOfLines={2} adjustsFontSizeToFit>{value}</Text>
+      <Text style={styles.statLabel} numberOfLines={2} textBreakStrategy="balanced">{label}</Text>
     </View>
   );
 }
@@ -277,9 +277,9 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: 14, fontFamily: TNR, color: COLORS.gray, textAlign: 'center' },
 
   // Stat Card
-  statCard: { backgroundColor: COLORS.white, borderRadius: RADIUS.md, padding: SPACING.lg, alignItems: 'center', borderWidth: 1, borderColor: COLORS.border, ...SHADOW.small, flex: 1 },
-  statValue: { fontSize: 22, fontFamily: TNR_BOLD, fontWeight: '800' },
-  statLabel: { fontSize: 11, fontFamily: TNR_BOLD, color: COLORS.gray, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
+  statCard: { backgroundColor: COLORS.white, borderRadius: RADIUS.md, padding: SPACING.md, alignItems: 'center', borderWidth: 1, borderColor: COLORS.border, ...SHADOW.small, width: '47%', minHeight: 90, justifyContent: 'center' },
+  statValue: { fontSize: 20, fontFamily: TNR_BOLD, fontWeight: '800', textAlign: 'center' },
+  statLabel: { fontSize: 11, fontFamily: TNR_BOLD, color: COLORS.gray, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 4, textAlign: 'center', lineHeight: 14 },
 
   // Divider
   divider: { height: 1, backgroundColor: COLORS.border, marginVertical: SPACING.md },
