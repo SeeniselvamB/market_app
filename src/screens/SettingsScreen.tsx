@@ -33,12 +33,11 @@ export default function SettingsScreen() {
   const [custPhone,      setCustPhone]      = useState('');
   const [custAddress,    setCustAddress]    = useState('');
   const [custPending,    setCustPending]    = useState('');
-  const [custIsDelivery, setCustIsDelivery] = useState(false);
 
   const openAddCust = () => {
     setEditingCustId(null);
     setCustName(''); setCustNameTa(''); setCustPhone(''); setCustAddress('');
-    setCustPending(''); setCustIsDelivery(false);
+    setCustPending('');
     setCustModal(true);
   };
   const openEditCust = (c: Customer) => {
@@ -46,7 +45,6 @@ export default function SettingsScreen() {
     setCustName(c.name); setCustNameTa(c.nameTa || '');
     setCustPhone(c.phone); setCustAddress(c.address);
     setCustPending(String(c.pendingAmount));
-    setCustIsDelivery(c.isDeliveryPerson || false);
     setCustModal(true);
   };
   const handleSaveCust = async () => {
@@ -57,7 +55,7 @@ export default function SettingsScreen() {
       phone: custPhone.trim(),
       address: custAddress.trim(),
       pendingAmount: parseFloat(custPending) || 0,
-      isDeliveryPerson: custIsDelivery,
+      isDeliveryPerson: false,
     };
     if (editingCustId) await updateCustomer(editingCustId, data);
     else await addCustomer(data);
@@ -165,8 +163,8 @@ export default function SettingsScreen() {
         ))}
       </ScrollView>
 
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="always">
 
           {/* ── CUSTOMERS ── */}
           {tab === 'customers' && (
@@ -181,7 +179,7 @@ export default function SettingsScreen() {
                         <View style={styles.itemRow}>
                           <View style={{ flex: 1 }}>
                             <Text style={styles.itemName}>
-                              {displayName}{c.isDeliveryPerson ? ' 🚚' : ''}
+                              {displayName}
                             </Text>
                             {c.nameTa && lang === 'en' && (
                               <Text style={styles.itemSub}>தமிழ்: {c.nameTa}</Text>
@@ -189,8 +187,6 @@ export default function SettingsScreen() {
                             {c.phone   ? <Text style={styles.itemSub}>📞 {c.phone}</Text>   : null}
                             {c.address ? <Text style={styles.itemSub}>📍 {c.address}</Text> : null}
                             <Badge label={`${t.pending2}: ${formatCurrency(c.pendingAmount)}`} variant="orange" />
-                            {c.isDeliveryPerson &&
-                              <Badge label="🚚 Delivery Person" variant="green" style={{ marginTop: 4 }} />}
                           </View>
                           <View style={styles.itemActions}>
                             <IconBtn icon="✏️" onPress={() => openEditCust(c)} />
@@ -300,9 +296,9 @@ export default function SettingsScreen() {
                   style={[styles.langOption, lang === l && styles.langOptionActive]}
                   onPress={() => setLang(l)}>
                   <Text style={[styles.langOptionText, lang === l && styles.langOptionTextActive]}>
-                    {l === 'en' ? `🇬🇧 ${t.english}` : `🇮🇳 ${t.tamil}`}
+                    {l === 'en' ? `${t.english}` : `${t.tamil}`}
                   </Text>
-                  {lang === l && <Text style={styles.langCheck}>✓</Text>}
+                  {lang === l && <Text style={styles.langCheck}></Text>}
                 </TouchableOpacity>
               ))}
               <View style={styles.langHint}>
@@ -324,27 +320,12 @@ export default function SettingsScreen() {
               <Text style={styles.modalTitle}>{editingCustId ? t.editCustomer : t.addCustomer}</Text>
               <IconBtn icon="✕" onPress={() => setCustModal(false)} />
             </View>
-            <ScrollView keyboardShouldPersistTaps="handled">
+            <ScrollView keyboardShouldPersistTaps="always">
               <Input label={t.customerName}      value={custName}    onChangeText={setCustName}    placeholder="Full name" />
               <Input label={t.customerNameTa}    value={custNameTa}  onChangeText={setCustNameTa}  placeholder="e.g. ராமன்" />
               <Input label={t.phone}             value={custPhone}   onChangeText={setCustPhone}   placeholder="+91 98765 43210" keyboardType="phone-pad" />
               <Input label={t.address}           value={custAddress} onChangeText={setCustAddress} placeholder="Delivery address" />
               <Input label={t.previousPendingRs} value={custPending} onChangeText={setCustPending} placeholder="0" keyboardType="numeric" />
-              <TouchableOpacity
-                style={[styles.toggleRow, custIsDelivery && styles.toggleRowActive]}
-                onPress={() => setCustIsDelivery(prev => !prev)}>
-                <Text style={styles.toggleLabel}>{t.markAsDeliveryPerson}</Text>
-                <View style={[styles.toggle, custIsDelivery && styles.toggleOn]}>
-                  <View style={[styles.toggleDot, custIsDelivery && styles.toggleDotOn]} />
-                </View>
-              </TouchableOpacity>
-              {custIsDelivery && (
-                <View style={styles.dpHintBox}>
-                  <Text style={styles.dpHintText}>
-                    When this person orders stock, it will be assigned to them. When normal customers are billed, stock is deducted from this person's assigned quantity.
-                  </Text>
-                </View>
-              )}
               <Button label={t.saveCustomer} onPress={handleSaveCust} full />
             </ScrollView>
           </View>
@@ -359,7 +340,7 @@ export default function SettingsScreen() {
               <Text style={styles.modalTitle}>{editingProdId ? t.editProduct : t.addProduct}</Text>
               <IconBtn icon="✕" onPress={() => setProdModal(false)} />
             </View>
-            <ScrollView keyboardShouldPersistTaps="handled">
+            <ScrollView keyboardShouldPersistTaps="always">
               <Input label={t.productName}   value={prodName}     onChangeText={setProdName}     placeholder="e.g. Apple" />
               <Input label={t.productNameTa} value={prodNameTa}   onChangeText={setProdNameTa}   placeholder="e.g. ஆப்பிள்" />
               <Input label={t.category}      value={prodCategory} onChangeText={setProdCategory} placeholder="Fruits / Vegetables" />

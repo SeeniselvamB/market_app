@@ -34,11 +34,8 @@ export default function OrdersScreen() {
       (c.phone || '').includes(search);
   });
 
-  // Sort: customer-DP entries pinned to top, then normal customers
-  const sortedCustomers: Customer[] = [
-    ...filteredCustomers.filter(c => c.isDeliveryPerson),
-    ...filteredCustomers.filter(c => !c.isDeliveryPerson),
-  ];
+  // All customers are normal customers (DP is always owner via OWNER_DP_ID)
+  const sortedCustomers: Customer[] = filteredCustomers;
 
   const renderDpEntry = () => {
     if (!isOwnerDp || !dp) return null;
@@ -151,7 +148,7 @@ export default function OrdersScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <SectionHeader title={`🛍️ ${t.orders}`} subtitle="Assign DP stock first, then take customer orders" />
+        <SectionHeader title={`${t.orders}`} subtitle="Assign DP stock first, then take customer orders" />
       </View>
       <View style={styles.searchWrap}>
         <Text style={styles.searchIcon}>🔍</Text>

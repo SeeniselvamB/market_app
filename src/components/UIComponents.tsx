@@ -104,6 +104,8 @@ export const Input = forwardRef<TextInput, InputProps>(({ label, style, inputSty
         placeholderTextColor={COLORS.gray}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
+        blurOnSubmit={false}
+        returnKeyType="next"
         {...props}
       />
     </View>

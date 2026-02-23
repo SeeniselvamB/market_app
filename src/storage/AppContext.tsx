@@ -4,12 +4,11 @@
 //
 // ROLES:
 //   A) Normal Customer    — placed in state.customers, generates bills/invoices.
-//   B) Delivery Person    — either a Customer with isDeliveryPerson=true, OR
-//                           the Business Owner when business.ownerIsDeliveryPerson=true.
-//                           When owner is DP, a synthetic id OWNER_DP_ID is used
-//                           for todayOrders and deliveryPersonStock. No real Customer
-//                           record is needed; no invoice is ever generated.
-//   C) Business Owner DP  — same as (B) but controlled from Business/Setup settings.
+//   B) Delivery Person    — ALWAYS the Business Owner (business.ownerIsDeliveryPerson=true).
+//                           A synthetic id OWNER_DP_ID is used for todayOrders and
+//                           deliveryPersonStock. No real Customer record needed.
+//                           Customers can NEVER be marked as Delivery Person.
+//                           No invoice is ever generated for the Delivery Person.
 //
 // STOCK LOGIC:
 // 1. Products have NO persistent default stock.
@@ -102,18 +101,14 @@ function computeMarketTotals(todayOrders: Record<string, Order>): Record<string,
 }
 
 // ── Resolve the effective Delivery Person ─────────────────────
-// Returns a Customer-like object with an id that can be used to look up
-// deliveryPersonStock. Returns undefined if no DP is configured.
-//
-// Priority:
-//   1. Business owner marked as DP (ownerIsDeliveryPerson=true) → synthetic OWNER_DP_ID
-//   2. A customer with isDeliveryPerson=true
+// Delivery Person is ALWAYS the Business Owner (via ownerIsDeliveryPerson flag).
+// Customers can NEVER be marked as Delivery Person.
+// Returns undefined if ownerIsDeliveryPerson is not enabled.
 function resolveDeliveryPerson(
   business: Business,
   customers: Customer[],
 ): Customer | undefined {
   if (business.ownerIsDeliveryPerson) {
-    // Synthetic DP entry for the owner — not a real customer
     return {
       id: OWNER_DP_ID,
       name: business.owner || business.name,
@@ -123,7 +118,9 @@ function resolveDeliveryPerson(
       isDeliveryPerson: true,
     };
   }
-  return customers.find(c => c.isDeliveryPerson);
+  // Note: customer-level isDeliveryPerson is no longer used.
+  // DP must always be configured via business.ownerIsDeliveryPerson.
+  return undefined;
 }
 
 interface AppContextType {

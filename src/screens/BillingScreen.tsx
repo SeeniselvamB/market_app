@@ -71,7 +71,7 @@ export default function BillingScreen() {
           )}
         </View>
         <Button
-          label={isBilled ? '✏️ Edit Bill' : '💰 Bill Now'}
+          label={isBilled ? 'Edit Bill' : 'Bill Now'}
           onPress={() => navigation.navigate('BillingDetail', { customerId: c.id })}
           variant={isBilled ? 'outline' : 'primary'}
           size="sm"
@@ -84,7 +84,7 @@ export default function BillingScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <SectionHeader title={`💰 ${t.billing}`} subtitle="Confirm deliveries & process payments" />
+        <SectionHeader title={`${t.billing}`} subtitle="Confirm deliveries & process payments" />
       </View>
 
       {/* Delivery Person Stock Reference Panel */}

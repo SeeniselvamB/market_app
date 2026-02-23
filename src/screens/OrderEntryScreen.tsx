@@ -137,8 +137,8 @@ export default function OrderEntryScreen() {
         </TouchableOpacity>
       </View>
 
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="always">
 
           {/* Info note for delivery person */}
           {isDp && (
@@ -178,6 +178,8 @@ export default function OrderEntryScreen() {
                         placeholder="0"
                         placeholderTextColor={COLORS.gray}
                         keyboardType="numeric"
+                        blurOnSubmit={false}
+                        returnKeyType="done"
                       />
                       <Text style={styles.unitLabel}>{p.unit}</Text>
                       <Text style={styles.lineTotal}>{lineTotal > 0 ? formatCurrency(lineTotal) : ''}</Text>
@@ -210,7 +212,7 @@ export default function OrderEntryScreen() {
                 <Text style={{ fontSize: 20, color: COLORS.gray }}>✕</Text>
               </TouchableOpacity>
             </View>
-            <ScrollView keyboardShouldPersistTaps="handled">
+            <ScrollView keyboardShouldPersistTaps="always">
               <Input label={t.productName}   value={extraName}     onChangeText={setExtraName}     placeholder="e.g. Apple" />
               <Input label={t.productNameTa} value={extraNameTa}   onChangeText={setExtraNameTa}   placeholder="e.g. ஆப்பிள்" />
               <Input label={t.category}      value={extraCategory} onChangeText={setExtraCategory} placeholder="Fruits / Vegetables" />
