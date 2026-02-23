@@ -291,8 +291,7 @@ export default function DashboardScreen() {
 
 <div class="hdr">
   <div class="biz">${state.business.name}</div>
-  <div class="biz-sub">${state.business.owner ? 'Owner: ' + state.business.owner : ''}${state.business.phone ? '  &bull;  ' + state.business.phone : ''}</div>
-  <div class="rpt-title">&#128202; Daily Sales Report</div>
+  <div class="rpt-title">Daily Sales Report</div>
   <div class="rpt-date">${dateLabel}</div>
 </div>
 

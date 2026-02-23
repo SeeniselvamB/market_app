@@ -118,8 +118,8 @@ export default function SetupScreen() {
           {/* ── STEP 1: Business Info ── */}
           {step === 1 && (
             <Card>
-              <CardHeader title="📋 Business Info" />
-              <Input label="Business Name *" value={bizName} onChangeText={setBizName} placeholder="e.g. Sharma Fresh Market" />
+              <CardHeader title="Business Info" />
+              <Input label="Business Name *" value={bizName} onChangeText={setBizName} placeholder="e.g. Seeniselvam Market" />
               <Input label="Owner / Contact Name" value={owner} onChangeText={setOwner} placeholder="Your name" />
               <Input label="Phone Number" value={phone} onChangeText={setPhone} placeholder="+91 98765 43210" keyboardType="phone-pad" />
 
@@ -156,7 +156,7 @@ export default function SetupScreen() {
           {/* ── STEP 2: Market Type ── */}
           {step === 2 && (
             <Card>
-              <CardHeader title="🏪 Market Type" />
+              <CardHeader title="Market Type" />
               <View style={styles.marketGrid}>
                 {[
                   { type: 'fruits',     emoji: '🍎', label: 'Fruits' },
@@ -190,8 +190,8 @@ export default function SetupScreen() {
           {/* ── STEP 3: Products ── */}
           {step === 3 && (
             <Card>
-              <CardHeader title="📦 Products" right={
-                <Button label="+ Add" onPress={() => setShowProdForm(v => !v)} size="sm" />
+              <CardHeader title="Products" right={
+                <Button label="Add" onPress={() => setShowProdForm(v => !v)} size="sm" />
               } />
               {showProdForm && (
                 <View style={styles.inlineForm}>
@@ -207,7 +207,7 @@ export default function SetupScreen() {
                   </View>
                   <View style={styles.btnRow}>
                     <Button label="Cancel" onPress={() => setShowProdForm(false)} variant="ghost" style={{ flex: 1 }} />
-                    <Button label="💾 Save" onPress={handleAddProduct} style={{ flex: 2 }} />
+                    <Button label="Save" onPress={handleAddProduct} style={{ flex: 2 }} />
                   </View>
                   <Divider />
                 </View>
@@ -230,8 +230,8 @@ export default function SetupScreen() {
           {/* ── STEP 4: Customers ── */}
           {step === 4 && (
             <Card>
-              <CardHeader title="👥 Customers" right={
-                <Button label="+ Add" onPress={() => setShowCustForm(v => !v)} size="sm" />
+              <CardHeader title="Customers" right={
+                <Button label="Add" onPress={() => setShowCustForm(v => !v)} size="sm" />
               } />
               {showCustForm && (
                 <View style={styles.inlineForm}>
