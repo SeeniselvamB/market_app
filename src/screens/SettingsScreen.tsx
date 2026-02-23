@@ -303,7 +303,7 @@ export default function SettingsScreen() {
               ))}
               <View style={styles.langHint}>
                 <Text style={styles.langHintText}>
-                  💡 When Tamil is selected, product names and customer names will appear in Tamil if you've set a Tamil name for them.
+                  When Tamil is selected, product names and customer names will appear in Tamil if you've set a Tamil name for them.
                 </Text>
               </View>
             </Card>
