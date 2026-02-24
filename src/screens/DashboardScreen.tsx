@@ -136,7 +136,7 @@ export default function DashboardScreen() {
             <td class="prod-cell">${firstProdLabel}</td>
             <td class="amt-cell${prevPend > 0 ? ' warn' : ''}" rowspan="${rs}">${prevPend > 0 ? '&#8377;' + prevPend.toFixed(2) : '<span class="zero">&#8377;0.00</span>'}</td>
             <td class="amt-cell" rowspan="${rs}">&#8377;${todaySale.toFixed(2)}</td>
-            <td class="amt-cell gray" rowspan="${rs}">${chargeAmt > 0 ? '&#8377;' + chargeAmt.toFixed(2) : '<span class=\"zero\">&#8377;0.00</span>'}</td>
+            <td class="amt-cell" rowspan="${rs}">${chargeAmt > 0 ? '&#8377;' + chargeAmt.toFixed(2) : '<span class=\"zero\">&#8377;0.00</span>'}</td>
             <td class="amt-cell bold" rowspan="${rs}">&#8377;${grandT.toFixed(2)}</td>
             <td class="amt-cell grn" rowspan="${rs}">&#8377;${received.toFixed(2)}</td>
             <td class="amt-cell ${isPend ? 'red bold' : 'grn'}" rowspan="${rs}">${isPend ? '&#8377;' + newPend.toFixed(2) : '<span class="zero">&#8377;0.00</span>'}</td>
@@ -271,7 +271,7 @@ export default function DashboardScreen() {
     .red{color:#DC2626;font-weight:bold}
     .warn{color:#D97706}
     .gray{color:#9CA3AF}
-    .zero{color:#9CA3AF}
+    .zero{color:##1B1B1B}
     .est{font-size:9px;background:#FEF3C7;color:#D97706;border-radius:2px;padding:0 3px}
     .badge-pending{font-size:8px;background:#FEE2E2;color:#DC2626;border-radius:2px;padding:1px 4px;font-weight:bold;letter-spacing:.4px;display:inline-block;margin-top:2px}
 
