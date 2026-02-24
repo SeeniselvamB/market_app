@@ -4,9 +4,12 @@
     "slug": "market-distributor",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "scheme": "marketdistributor",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
       "backgroundColor": "#2D6A4F"
     },
     "ios": {
@@ -14,18 +17,20 @@
       "bundleIdentifier": "com.marketdistributor.app"
     },
     "android": {
+      "package": "com.marketdistributor.app",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#2D6A4F"
-      },
-      "package": "com.marketdistributor.app"
+      }
     },
     "web": {
-      "favicon": "./assets/icon.png"
+      "favicon": "./assets/images/icon.png"
     },
-    "plugins": [
-      [
-        "expo-font"
-      ]
-    ]
+    "plugins": ["expo-font"],
+    "extra": {
+      "eas": {
+        "projectId": "ff2b9c1f-bc5e-4ad9-9b17-49ba5e1611eb"
+      }
+    }
   }
 }
