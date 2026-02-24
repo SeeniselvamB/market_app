@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Market Manager",
+    "name": "Market Distributor",
     "slug": "market-distributor",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,7 @@
       "package": "com.marketdistributor.app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
       [
