@@ -52,6 +52,7 @@ export default function BillingDetailScreen() {
   const dpStock = (!isDp && dp) ? getDeliveryPersonStock(dp.id) : {};
 
   const [deliveredQtys, setDeliveredQtys] = useState<Record<string, string>>({});
+  const [charge, setCharge]   = useState('');
   const [payment, setPayment] = useState('');
 
   // Block DP from billing
@@ -73,7 +74,10 @@ export default function BillingDetailScreen() {
       init[item.productId] = String(existingBill ? (item.delivered ?? item.qty) : item.qty);
     });
     setDeliveredQtys(init);
-    if (existingBill) setPayment(String(existingBill.payment));
+    if (existingBill) {
+      setPayment(String(existingBill.payment));
+      setCharge(String(existingBill.charge ?? 0));
+    }
   }, [customerId]);
 
   if (!customer || !order) return null;
@@ -85,8 +89,9 @@ export default function BillingDetailScreen() {
     return sum + (p ? delivered * p.price : 0);
   }, 0);
 
+  const chargeNum   = parseFloat(charge) || 0;
   const prevPending = customer.pendingAmount || 0;
-  const grandTotal  = todayTotal + prevPending;
+  const grandTotal  = todayTotal + chargeNum + prevPending;
   const paymentNum  = parseFloat(payment) || 0;
   const newPending  = Math.max(0, grandTotal - paymentNum);
 
@@ -96,7 +101,7 @@ export default function BillingDetailScreen() {
     order.items.forEach(item => {
       deliveredMap[item.productId] = parseFloat(deliveredQtys[item.productId] || '0') || 0;
     });
-    const bill: Bill = { todayTotal, prevPending, grandTotal, payment: paymentNum, newPending, billedAt: new Date().toISOString() };
+    const bill: Bill = { todayTotal, prevPending, charge: chargeNum, grandTotal, payment: paymentNum, newPending, billedAt: new Date().toISOString() };
     const success = await saveBill(customerId, bill, deliveredMap);
     if (success) {
       setIsEditMode(false);
@@ -181,6 +186,7 @@ export default function BillingDetailScreen() {
   <div class="totals">
     <div class="totals-row"><span>Today\'s Total</span><span class="bold">${formatCurrency(todayTotal)}</span></div>
     <div class="totals-row" style="color:#F4721B"><span>Previous Pending</span><span class="bold">${formatCurrency(prevPending)}</span></div>
+    ${chargeNum > 0 ? `<div class="totals-row" style="color:#6B7280"><span>Charge (Vehicle Expense)</span><span class="bold">${formatCurrency(chargeNum)}</span></div>` : ''}
     <div class="totals-row grand"><span>Grand Total</span><span>${formatCurrency(grandTotal)}</span></div>
     <div class="totals-row" style="color:#2D6A4F"><span>Payment Received</span><span class="bold">${formatCurrency(paymentNum)}</span></div>
     <div class="totals-row balance"><span>Balance Pending</span><span>${formatCurrency(newPending)}</span></div>
@@ -387,6 +393,26 @@ export default function BillingDetailScreen() {
           <View style={styles.summaryBox}>
             <BillRow left={t.todayTotal}      right={formatCurrency(todayTotal)} />
             <BillRow left={t.previousPending} right={formatCurrency(prevPending)} color={COLORS.orange} />
+
+            {/* Charge (Vehicle Expense) */}
+            <View style={styles.chargeRow}>
+              <Text style={styles.chargeLabel}>Charge (Vehicle Expense)</Text>
+              {isEditMode ? (
+                <TextInput
+                  style={styles.chargeInput}
+                  value={charge}
+                  onChangeText={val => setCharge(val.replace(/[^0-9.]/g, ''))}
+                  keyboardType="numeric"
+                  placeholder="0.00"
+                  placeholderTextColor={COLORS.gray}
+                  blurOnSubmit={false}
+                  returnKeyType="next"
+                />
+              ) : (
+                <Text style={styles.chargeReadOnly}>{formatCurrency(chargeNum)}</Text>
+              )}
+            </View>
+
             <BillRow left={t.grandTotal}      right={formatCurrency(grandTotal)}  bold />
           </View>
 
@@ -415,7 +441,7 @@ export default function BillingDetailScreen() {
             <Text style={styles.pendingValue}>{formatCurrency(newPending)}</Text>
           </View>
           <Text style={styles.formula}>
-            {t.formula}: {formatCurrency(prevPending)} + {formatCurrency(todayTotal)} − {formatCurrency(paymentNum)} = {formatCurrency(newPending)}
+            {t.formula}: {formatCurrency(prevPending)} + {formatCurrency(todayTotal)}{chargeNum > 0 ? ` + ${formatCurrency(chargeNum)} (Charge)` : ''} − {formatCurrency(paymentNum)} = {formatCurrency(newPending)}
           </Text>
 
           <Divider />
@@ -513,6 +539,10 @@ const styles = StyleSheet.create({
 
   // Summary
   summaryBox: { backgroundColor: COLORS.white, borderRadius: RADIUS.md, padding: SPACING.md, borderWidth: 1, borderColor: COLORS.border, marginBottom: SPACING.md },
+  chargeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderTopWidth: 1, borderTopColor: COLORS.border },
+  chargeLabel: { fontSize: 13, fontFamily: TNR, color: COLORS.gray, flex: 1 },
+  chargeInput: { borderWidth: 1.5, borderColor: COLORS.border, borderRadius: RADIUS.sm, paddingHorizontal: SPACING.sm, paddingVertical: 5, fontSize: 14, fontFamily: TNR_BOLD, fontWeight: '600', color: COLORS.dark, minWidth: 90, textAlign: 'right' },
+  chargeReadOnly: { fontSize: 14, fontFamily: TNR_BOLD, fontWeight: '600', color: COLORS.dark },
 
   // Payment
   paymentBox:      { backgroundColor: COLORS.white, borderRadius: RADIUS.md, padding: SPACING.md, borderWidth: 1, borderColor: COLORS.border, marginBottom: SPACING.md },

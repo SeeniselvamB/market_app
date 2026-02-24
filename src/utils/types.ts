@@ -60,7 +60,8 @@ export interface Order {
 export interface Bill {
   todayTotal: number;
   prevPending: number;
-  grandTotal: number;
+  charge: number;       // Vehicle / delivery expense charge
+  grandTotal: number;   // todayTotal + charge (prevPending tracked separately)
   payment: number;
   newPending: number;
   billedAt: string;

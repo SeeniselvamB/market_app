@@ -81,7 +81,7 @@ export default function DashboardScreen() {
       });
 
       // ── Running totals ────────────────────────────────────
-      let rptSales = 0, rptReceived = 0, rptPending = 0, rptPrevPending = 0;
+      let rptSales = 0, rptReceived = 0, rptPending = 0, rptPrevPending = 0, rptCharge = 0;
 
       // ── Build customer rows with full Tamil support ──
       // Each customer block: first row has rowspan financial cols,
@@ -95,10 +95,12 @@ export default function DashboardScreen() {
         rptReceived    += bill.payment;
         rptPending     += bill.newPending;
         rptPrevPending += bill.prevPending;
+        rptCharge      += (bill.charge ?? 0);
 
         const prevPend  = bill.prevPending;
         const todaySale = bill.todayTotal;
-        const grandT    = bill.grandTotal ?? (prevPend + todaySale);
+        const chargeAmt = bill.charge ?? 0;
+        const grandT    = bill.grandTotal ?? (prevPend + todaySale + chargeAmt);
         const received  = bill.payment;
         const newPend   = bill.newPending;
         const isPend    = newPend > 0;
@@ -134,6 +136,7 @@ export default function DashboardScreen() {
             <td class="prod-cell">${firstProdLabel}</td>
             <td class="amt-cell${prevPend > 0 ? ' warn' : ''}" rowspan="${rs}">${prevPend > 0 ? '&#8377;' + prevPend.toFixed(2) : '<span class="zero">&#8377;0.00</span>'}</td>
             <td class="amt-cell" rowspan="${rs}">&#8377;${todaySale.toFixed(2)}</td>
+            <td class="amt-cell gray" rowspan="${rs}">${chargeAmt > 0 ? '&#8377;' + chargeAmt.toFixed(2) : '<span class=\"zero\">&#8377;0.00</span>'}</td>
             <td class="amt-cell bold" rowspan="${rs}">&#8377;${grandT.toFixed(2)}</td>
             <td class="amt-cell grn" rowspan="${rs}">&#8377;${received.toFixed(2)}</td>
             <td class="amt-cell ${isPend ? 'red bold' : 'grn'}" rowspan="${rs}">${isPend ? '&#8377;' + newPend.toFixed(2) : '<span class="zero">&#8377;0.00</span>'}</td>
@@ -177,6 +180,7 @@ export default function DashboardScreen() {
             <td class="amt-cell" rowspan="${rs}"><em>&#8377;${estTotal.toFixed(2)}</em>&nbsp;<span class="est">est.</span></td>
             <td class="amt-cell gray" rowspan="${rs}">&mdash;</td>
             <td class="amt-cell gray" rowspan="${rs}">&mdash;</td>
+            <td class="amt-cell gray" rowspan="${rs}">&mdash;</td>
             <td class="amt-cell warn" rowspan="${rs}">Pending</td>
           </tr>`;
         const extraRows = items.slice(1).map(p => {
@@ -208,7 +212,7 @@ export default function DashboardScreen() {
         return s + (p ? purchaseTotals[pid] * p.price : 0);
       }, 0);
 
-      const grandOverallTotal = rptPrevPending + rptSales;
+      const grandOverallTotal = rptPrevPending + rptSales + rptCharge;
 
       // ── HTML ──────────────────────────────────────────────
       // Tamil text is rendered using Unicode HTML entities (&#xxxx;).
@@ -325,6 +329,12 @@ export default function DashboardScreen() {
   மொத்த விற்பனை
 </span>
       </th>
+      <th class="right" style="min-width:72px">
+        Charge
+        <span class="ta" style="color:rgba(255,255,255,0.75);text-transform:none;letter-spacing:0">
+  கட்டணம்
+</span>
+      </th>
       <th class="right" style="min-width:76px">
         Grand Total
         <span class="ta" style="color:rgba(255,255,255,0.75);text-transform:none;letter-spacing:0">
@@ -346,7 +356,7 @@ export default function DashboardScreen() {
     </tr>
   </thead>
   <tbody>
-    ${customerBlocks || '<tr><td colspan="7" style="text-align:center;color:#9CA3AF;padding:16px">No billed customers yet today</td></tr>'}
+    ${customerBlocks || '<tr><td colspan="8" style="text-align:center;color:#9CA3AF;padding:16px">No billed customers yet today</td></tr>'}
     ${unbilledBlocks}
   </tbody>
 </table>
@@ -368,6 +378,10 @@ export default function DashboardScreen() {
     <div class="s-value grn">&#8377;${rptReceived.toFixed(2)}</div>
   </div>
   <div class="summary-item">
+    <div class="s-label">Charge <span class="s-label-ta">கட்டணம்</span></div>
+    <div class="s-value gray">&#8377;${rptCharge.toFixed(2)}</div>
+  </div>
+  <div class="summary-item">
     <div class="s-label">New Pending <span class="s-label-ta">புதிய நிலுவை</span></div>
     <div class="s-value ${rptPending > 0 ? 'red' : 'grn'}">&#8377;${rptPending.toFixed(2)}</div>
   </div>
@@ -376,7 +390,7 @@ export default function DashboardScreen() {
 <table class="tot-table">
   <thead>
     <tr>
-      <th>Grand Total (Prev. Pending + Sales)</th>
+      <th>Grand Total (Prev. Pending + Sales + Charge)</th>
       <th style="text-align:right">Total Collected</th>
       <th style="text-align:right">Outstanding Balance</th>
     </tr>
